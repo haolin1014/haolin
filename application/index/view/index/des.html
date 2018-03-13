@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>生活照相馆</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,height=device-height">
+	<link rel="stylesheet" href="__STATIC__/home/css/reset.css">
+	<link rel="stylesheet" href="__STATIC__/home/css/index.css">
+	<script src="__STATIC__/home/js/jquery-2.1.4.min.js"></script>
+<script>
+	$('html').css('fontSize',$(window).width()/12);
+</script>
+</head>
+<body>
+	<h1>预约说明</h1>
+<div class="box">
+	{$desc}
+</div>
+<footer style="display:block;">
+	<a href="{:url('index/index/index')}" style="float:left;padding-left:10px;">返回</a>
+	<a href="{:url('index/index/chooseTime')}">下一步</a>
+</footer>
+</body>
+</html>

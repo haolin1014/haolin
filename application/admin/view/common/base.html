@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>后台管理系统</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/bootstrap.min.css">
+    <script type="text/javascript" src="__STATIC__/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/bootstrap.min.js"></script>
+<style type="text/css">
+a:focus{
+	outline: none;
+}
+.panel-title>a:hover,.panel-title>a:visited,.panel-title>a:focus{text-decoration: none;outline: none;}
+.pclr{padding:0;}
+html,body,.container-fluid{
+	height: 100%;
+}
+.divleft{
+	background: #222;
+	min-height: 800px;
+}
+.divleft a{color: #fff;}
+
+.daohang li,.daohang a{
+	display: block;
+	padding:10px 0;
+	text-align: center;
+	font-size: 18px;
+	text-decoration: none;
+}
+.daohang a:hover{
+	color:#ccc;
+}
+.logo{
+	margin:15px auto;
+	text-align: center;
+}
+.logo img{
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+}
+.divright{
+	height: 100%;
+}
+</style>
+
+</head>
+<body>
+<!-- 内容区 -->
+<div class="container-fluid">
+<div class="row main">
+	<div class="col-md-2 pclr divleft">
+		<div class="logo">
+			<img src="__STATIC__/logo.jpg" alt="logo">
+		</div>
+		<ul class="list-unstyled daohang">
+			<li><a href="{:url('Admin/Index/index')}">预约订单</a></li>
+			<li><a href="{:url('Admin/Index/history')}">历史订单</a></li>
+			<li><a href="{:url('admin/time/index')}">可预约时间</a></li>
+			<li><a href="{:url('Admin/shop/index')}">店铺设置</a></li>
+			<li><a href="{:url('Admin/manage/index')}">管理员设置</a></li>
+		</ul>
+	</div>
+	<div class="col-md-10 pclr divright">
+	<!-- top -->
+	<div class='navbar navbar-inverse' style="border-radius:0px;">
+		<a href="{:url('admin/login/logout')}" target='_self' class='pull-right' style="padding:15px;color:#fff;">退出登录</a>
+		<span class='pull-right' style="padding:15px 5px 15px 20px;color:#ccc;">{$Think.session.username}</span>  
+		<form action="{:url('Admin/Index/search')}"  class="navbar-form pull-right" rol="search">
+		   	<div class="form-group">
+		   		<input type="text" class="form-control" placeholder="请输入用户名或电话号码"  name="key" id="key" />
+		   	</div>
+		     <button type="submit" class="btn btn-default" id="search">搜索</button>
+		</form>
+
+
+	</div>
+	<!-- top结束 -->
+		<!-- 内容部分 -->
+		{block name="main"}{/block}
+	</div>
+</div>
+</div>
+<script>
+  $(function(){
+    $(".version").click(function(){
+      $("#version").modal("toggle");
+    });
+  });
+</script>
+</body>
+</html>
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>生活照相馆</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,height=device-height">
+	<link rel="stylesheet" href="__STATIC__/home/css/reset.css">
+	<link rel="stylesheet" href="__STATIC__/home/css/myorder.css">
+	<script src="__STATIC__/home/js/jquery-2.1.4.min.js"></script>
+<script>
+	$('html').css('fontSize',$(window).width()/12);
+</script>
+<style>
+.logo{
+	margin-top: 1rem;
+	width: 100%;
+	text-align: center;
+}	
+.logo img{
+	width: 60%;
+	border-radius: 50%;
+}
+.paybtn{
+	width: 80%;
+	display: block;
+	padding:0.2rem;
+	background-color: rgb(79,191,26);
+	color:#fff;
+	margin:1rem auto;
+	border-radius: 0.25rem;
+}
+</style>
+</head>
+<body>
+<div class="logo">
+	<img src="__STATIC__/home/img/student.jpg" alt="logo">
+</div>
+<p style="text-align:center;">下单成功，请在3分钟内完成支付！</p>
+<p style="text-align:center;">
+	<a href="{:url('Home/Order/pay',array('order_id'=>$order_id))}" class="paybtn">立即支付</a>
+</p>
+<div class="tel">
+	<p><span>联系电话：</span><a href="tel:4000777143">400-0777-143</a></p>
+</div>
+</body>
+</html>

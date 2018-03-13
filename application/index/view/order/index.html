@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>生活照相馆</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,height=device-height">
+	<link rel="stylesheet" href="__STATIC__/home/css/reset.css">
+	<link rel="stylesheet" href="__STATIC__/home/css/order.css">
+	<script src="__STATIC__/home/js/jquery-2.1.4.min.js"></script>
+<script>
+	$('html').css('fontSize',$(window).width()/12);
+</script>
+</head>
+<body>
+<h1>确认预约</h1>
+
+<div class="order_box">
+	<div class="order">
+		<p>预约门店：<span class="order-shop">生活委员{$Think.session.shopName}</span></p>
+		<p>预约时间：	</p>
+		{foreach name="order_time" item="v"}
+		<p class="time-p"><span class="time-con">{$v.day} {$v.time}<i class="time_del" data-id="{$v.id}">删除</i></span></p>
+		{/foreach}
+		<p>预计耗时：45分钟（不好特殊情况所耗时间）</p>
+	</div>
+</div>
+<p class="desc">留下您的联系方式<br/>并支付10元订金即可完成预约</p>
+<form action="{:url('index/order/buy')}" method="post" name="buy">
+	<div class="input-box">
+		<label>姓名</label><input type="text" name="username">
+	</div>
+	 <div class="input-box">
+	 	<input type="radio" id="boy" name="sex" checked value="男">
+		<label for="boy">男</label>
+		<input type="radio" id="gril" name="sex" value="女">
+		<label for="gril">女</label>
+	</div>
+	<div class="input-box">
+		<label>手机</label><input type="tel" name="phone">
+	</div>
+	<div style="height:2rem;"></div>
+	<div style="height:11rem;display:none;" id="focus"></div>
+	<footer>
+		<a href="{:url('index/Index/chooseTime')}" style="float:left;padding-left:10px;">返回</a>
+		<button type="submit">立即下单</button>
+	</footer>
+</form>
+<script>
+$(function(){
+	$(".time_del").on('click',function(){
+		// ajax删除该项
+		var id = $(this).attr('data-id');
+		var That = $(this);
+			$.ajax({
+				url: "{:url('index/order/delete')}",
+				type: 'post',
+				dataType: 'json',
+				data: {id: id},
+				success:function(data){
+					// 样式改变
+					That.parent().parent('p').fadeOut('slow',function(){
+						That.remove();
+					});
+				}
+			});
+		
+	});
+	$("input[type=text],input[type=tel]").focus(function(){
+		$("#focus").show();
+	});
+	$("input[type=text],input[type=tel]").blur(function(){
+		$("#focus").hide();
+	});
+	// 提交订单
+	$("form[name=buy]").submit(function(event) {
+		/* 监测表单数据是否为空 */
+		var username = $("input[name=username]").val();
+		var phone = $("input[name=phone]").val();
+		if(username == ''){
+			alert('用户名不能为空');
+			return false;
+		}
+		if(phone == ''){
+			alert('电话号码不能为空');
+			return false;
+		}
+	});
+})
+</script>
+</body>
+</html>

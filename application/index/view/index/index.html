@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>生活照相馆</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,height=device-height">
+	<link rel="stylesheet" href="__STATIC__/home/css/reset.css">
+	<link rel="stylesheet" href="__STATIC__/home/css/index.css">
+	<script src="__STATIC__/home/js/jquery-2.1.4.min.js"></script>
+<script>
+	$('html').css('fontSize',$(window).width()/12);
+</script>
+</head>
+<body>
+	<h1>选择门店</h1>
+<div class="box">
+	{foreach name="shop" item="v"}
+	<div class="item" data-address="{$v.address}" data-pic1="__STATIC__/{$v.pic1}" data-pic2="__STATIC__/{$v.pic2}" style="background:url(__STATIC__/{$v.pic1}) no-repeat center center;background-size:3.5rem;" data-shopid="{$v.id}" data-shopname="{$v.name}"></div>
+	{/foreach}
+</div>
+<div class="address"></div>
+<footer>
+	<a href="javascript:;" class="next">下一步</a>
+</footer>
+
+<script>
+$(function(){
+	var shop_select = '';
+	var shop_name = '';
+	$(".item").on('touchend',function(){
+		$(this).css('backgroundImage','url('+$(this).data('pic2')+')');
+		$(this).siblings('.item').each(function(index, el) {
+			$(el).css('backgroundImage','url('+$(el).data('pic1')+')');
+		});
+		shop_select = $(this).data('shopid');
+		shop_name = $(this).data('shopname');
+
+		$("footer").show();
+		var address = $(this).data('address');
+		$(".address").text(address).show();
+	});
+
+	$(".next").click(function(){
+		location.href="{:url('index/index/des')}?shopid="+shop_select+"&shopName="+shop_name;
+	});
+})
+</script>
+</body>
+</html>

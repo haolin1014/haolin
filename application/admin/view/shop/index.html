@@ -1,0 +1,114 @@
+{extend name="common:base" /}
+
+{block name="main"}
+<style type="text/css">
+.dian-logo{
+	width: 120px;
+	height: 120px;
+}
+.dian-logo img{
+	height: 120px;
+	width:120px;
+}
+</style>
+<body>
+<div class="container">
+	<div class="row">
+		<a href="{:url('admin/shop/add')}" class="btn btn-primary pull-right">创建新店铺</a>
+	</div>
+	<div class="row">
+		{foreach $shop as $v}
+		<div class="col-md-6" style="padding-bottom:15px;">
+			<div class="row">
+				<div class="col-md-4">
+					<a href="{:url('admin/shop/update',array('id'=>$v['id']))}"><img src="__STATIC__/{$v.pic1}" alt="logo" width="120"></a>
+				</div>
+				<div class="col-md-8"  style="padding-left:0px;">
+					<h3 style="margin:10px 0;">{$v.name}</h3>
+					<input type="text" class="form-control input-sm" value="{$v.address}" readonly="true">
+					<button class="btn btn-default btn-xs pull-right changeaddress" style="margin:10px;" data-id="{$v.id}">修改</button>
+				</div>
+			</div>
+		</div>
+		{/foreach}
+	</div>
+	<!-- 预约说明 -->
+	<div class="row" style="border-top:1px solid #ccc;padding-top:15px;">
+		<div class="col-md-2">
+			<label style="font-size:18px;">预约说明 ：</label>
+		</div>
+		<div class="col-md-10">
+			<textarea name="shopDec" cols="30" rows="10" class="form-control" id="shopDec">{$desc}</textarea>
+			<button class="btn btn-success" style="margin:10px" id="updateSet">保存</button>
+		</div>
+	</div>
+</div>
+
+<!-- 操作提示框 -->
+<div class="modal fade" id="success">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">保存成功</h4>
+      </div>
+      <div class="modal-body">
+      	<button class="btn btn-success">恭喜您， 操作成功！</button>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function(){
+	$(".changeaddress").click(function(event) {
+		/* 修改地址 */
+		var type = $(this).text();
+		if(type=='修改'){
+			$(this).text('保存');
+			var input = $(this).prev('input');
+			input.attr('readonly',false);//设置可写
+			var val = input.val();
+			input.val('').focus().val(val);//使光标移动到文字最后位置
+
+		}else{
+			$(this).text('修改');
+			$(this).prev('input').attr('readonly',true);
+			// 异步修改地址,开发时间补充
+			var id = $(this).data("id");
+			var address = $(this).prev('input').val();
+			$.ajax({
+				url: "{:url('Admin/Shop/updateAddress')}",
+				type: 'post',
+				dataType: 'json',
+				data: {id: id, address:address},
+				success:function(data){
+
+				}
+			});
+		}
+	});
+	// 更新店铺说明
+	$("#updateSet").click(function(event) {
+		var shopDec = $("#shopDec").val();
+		$.ajax({
+				url: "{:url('Admin/Shop/updateSet')}",
+				type: 'post',
+				dataType: 'json',
+				data: {shopDec:shopDec},
+				success:function(data){
+					if(data.state==1){
+						$("#success").modal();
+						setTimeout(function(){
+							$("#success").modal('hide');
+						},1200);
+					}
+				}
+			});
+	});
+})
+
+</script>
+{/block}

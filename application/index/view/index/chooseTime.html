@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>生活照相馆</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,height=device-height">
+	<link rel="stylesheet" href="__STATIC__/home/css/reset.css">
+	<link rel="stylesheet" href="__STATIC__/home/css/chooseTime.css">
+	<script src="__STATIC__/home/js/jquery-2.1.4.min.js"></script>
+<script>
+	$('html').css('fontSize',$(window).width()/12);
+</script>
+</head>
+<body>
+<h1>选择时间</h1>
+<p class="shopName">{$Think.session.shopName}</p>
+<div class="time_box">
+	<div class="time_header active">今天 ({php}echo date("Y-m-d");{/php})<span class="arrow"><i class="down"></i></span></div>
+	<div class="time_body">
+		<div class="time_content  clr">
+			{foreach name="today" item="v"}
+				{switch name="v['state']"}
+				    {case value="1"}<span class="ordered">{$v.time}</span>{/case}
+				    {case value="2"}<span class="out">{$v.time}</span>{/case}
+				    {default /}
+				    	{if condition="strtotime($v['time']) gt time()"}
+				    	<span data-id="{$v.id}">{$v.time}</span>
+				    	{else /}
+				    	<span class="out">{$v.time}</span>
+				    	{/if}
+				{/switch}
+			{/foreach}
+		</div>
+	</div>
+	<div class="time_header">明天 ({php}echo date("Y-m-d",strtotime('+1 day'));{/php})<span class="arrow"><i class="up"></i></span></div>
+	<div class="time_body clr" style="display:none;">
+		<div class="time_content">
+			{foreach name="tomorrow" item="v"}
+				{switch name="v['state']"}
+				    {case value="1"}<span class="ordered">{$v.time}</span>{/case}
+				    {case value="2"}<span class="out">{$v.time}</span>{/case}
+				   	{default /}
+				    	<span  data-id="{$v.id}">{$v.time}</span>
+				{/switch}
+			{/foreach}
+		</div>
+	</div>
+</div>
+<footer>
+	<a href="{:url('index/Index/des')}" style="float:left;padding-left:10px;">返回</a>
+	<a href="{:url('index/order/index')}" id="next">下一步</a>
+</footer>
+<script>
+$(function(){
+	var num = 0;//选择时间段总数，最多不能超过5个时间段
+	// 选择时间时间
+	$(".time_content").on('click','span',function(){
+		if($(this).hasClass('selected')){
+			$(this).removeClass('selected');
+			var id = $(this).attr('data-id');
+			$.ajax({
+				url: "{:url('index/cart/delete')}",
+				type: 'post',
+				dataType: 'json',
+				data: {id: id},
+				success:function(data){
+					num--;
+				}
+			});
+			
+		}else{
+			var id = $(this).attr('data-id');
+			// 判断选择时间是否合法
+			if(!id){
+				return false;
+			}
+			// 判断时间段数量是否合法
+			if(num<5){
+				num++;
+			}else{
+				alert('最多只能选择5个时间段');
+				return false;
+			}
+				
+			$(this).addClass('selected');
+
+			$.ajax({
+				url: "{:url('index/cart/add')}",
+				type: 'post',
+				dataType: 'json',
+				data: {id: id},
+				success:function(data){
+				}
+			});
+		}	
+	});
+	// 切换日期
+	$(".time_header").on('touchend',function(){
+		$(this).hasClass('active') ? $(this).removeClass('active').siblings('.time_header').addClass('active') : $(this).addClass('active').siblings('.time_header').removeClass('active');//头部样式调整
+
+		var oi = $(this).find("i");
+		var oib = $(this).siblings('.time_header').find("i");
+		oi.hasClass('down') ? oi.removeClass('down').addClass('up') :  oi.removeClass('up').addClass('down') ;
+		oib.hasClass('down') ? oib.removeClass('down').addClass('up') :  oib.removeClass('up').addClass('down') ;
+
+		$(this).next('.time_body').is(":visible") ? $(this).next('.time_body').slideUp() : $(this).next('.time_body').slideDown();//元素展开
+		$(this).siblings('.time_header').next('.time_body').is(":visible") ? $(this).siblings('.time_header').next('.time_body').slideUp() :$(this).siblings('.time_header').next('.time_body').slideDown();//兄弟元素收起
+	});
+
+	// 时间span大小自适应
+	var spanW = $(".time_content").width()/7;
+	var spanM = spanW/12;
+	$(".time_content span").width(spanW).css({
+		'padding': '0.1rem',
+		'margin': spanM
+	});
+
+	$("#next").click(function(event) {
+		/* 下一步，监测是否已经选择过时间了 */
+		if(num>0){
+			return true;
+		}else{
+			alert('请选择预约时间段');
+			return false;
+		}
+	});
+
+})
+</script>
+</body>
+</html>

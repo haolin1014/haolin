@@ -1,0 +1,86 @@
+{extend name="common:base" /}
+
+{block name="main"}
+<style>
+input[type=submit]{width: 200px;background-color: #abcdef;font-weight:bold;}
+</style>
+<body>
+<div class="container">
+<div class="row" style="margin-bottom:10px;">
+  <button class="btn btn-danger pull-right" id="delbtn">删除店铺</button>
+</div>
+  <form action="{:url('Admin/Shop/update')}" method="post" enctype="multipart/form-data">
+  <table class="table table-bordered">
+     <thead>
+       <tr>
+         <th colspan="2" align="center">修改店铺</th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <td><span class="pull-right">店铺名</span></td>
+         <td><input type="text" class="form-control" name="name"  value="{$shop.name}"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">店铺地址</span></td>
+         <td><input type="text" class="form-control" name="address" value="{$shop.address}"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">店铺logo正面图</span></td>
+         <td><img src="__STATIC__/{$shop.pic1}" style="height: 150px;"><br/><input type="file"  name="pic1"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">店铺地址选中图</span></td>
+         <td><img src="__STATIC__/{$shop.pic2}" style="height: 150px;"><br/><input type="file"  name="pic2"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">可预约开始时间</span></td>
+         <td><input type="text" class="form-control" name="start_time" value="{$shop.start_time}"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">可预约结束时间</span></td>
+         <td><input type="text" class="form-control" name="end_time" value="{$shop.end_time}"></td>
+       </tr>
+       <tr>
+         <td colspan="2" align="center">
+          <input type="hidden" name="id" value="{$shop.id}">
+          <input type="submit" class="form-control" value="保存修改">
+         </td>
+       </tr>
+     </tbody>
+   </table>
+  </form>
+</div>
+
+<!-- 删除警示框 -->
+<div class="modal fade" id="del">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">您确认要删除店铺吗？</h4>
+      </div>
+      <div class="modal-body">
+        删除后数据不可恢复，请谨慎操作！
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="del-yes">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function(){
+    $("#delbtn").click(function(event) {
+      /* 删除操作 */
+      $("#del").modal();
+      $("#del-yes").click(function(event) {
+        /* 确认删除 */
+        location.href = "{:url('Admin/Shop/del',array('id'=>$shop['id']))}";
+      });
+    });
+  })
+</script>
+{/block}

@@ -1,0 +1,90 @@
+{extend name="common:base" /}
+
+{block name="main"}
+<style type="text/css">
+a:focus{
+	outline: none;
+}
+.table{
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-bottom:  1px solid #ccc;
+}
+.table tr{
+	text-align: center;
+}
+.panel-span{
+	float: left;
+	text-align: center;
+	width:150px;
+}
+.w-title{
+	padding:10px 15px;
+	background-color: rgb(66,139,202);
+	color:#fff;
+	margin-bottom: 0;
+	border-radius: 4px 4px 0 0;
+}
+</style>
+<body>
+<div class="container">
+	<div class="row" style="margin-bottom:10px;">
+		{foreach $Think.session.shops as $v}
+			<a href="{:url('admin/index/history',['shop_id'=>$v.id])}" class='btn {if condition="($Request.param.shop_id == $v.id) OR (!$Request.param.shop_id AND $v.id == 1)"}btn-primary{/if} '>{$v.name}</a>
+		{/foreach}
+		<div class="w-shooseTime pull-right">
+			<select class="form-control" name="Ym" id="Ym">
+			  {foreach $Yms as $k => $v}
+			  	<option value="{$k}" {if condition="$Request.param.Ym==$k" }selected{/if} >{$v}</option>
+			  {/foreach}
+			</select>
+		</div>
+	</div>
+	<div class="row">
+		<div class="panel panel-primary" style="width:200px;text-align:center;float:left;margin-right:10px;">
+			<div class="panel-heading">
+				<h3 class="panel-title">{$shopName} {$Ym}月订单</h3>
+			</div>
+			<div class="panel-body" style="font-size:20px;">
+				{$order_month_sum}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<p class="w-title clearfix"><span class="panel-span">时间</span><span class="panel-span">订单量</span></p>
+		<div class="panel-group" id="accordion">
+		{foreach $day_groups as $k => $v}
+		    <div class="panel panel-default">
+		        <div class="panel-heading">
+		            <h4 class="panel-title clearfix"><span class="panel-span">{$v.order_day}</span><span class="panel-span">{$v.count}</span><a  class="pull-right" data-toggle="collapse" data-parent="#accordion" href="#collapseOne{$k}">展开</a></h4>
+		        </div>
+		        <div id="collapseOne{$k}" class="panel-collapse collapse">
+		            <div class="panel-body">
+		            	<table class="table">
+		            		{foreach $v['orders'] as $v1}
+		            			{foreach $v1['order_time'] as $v2}
+				            	<tr>
+									<td>{$v2}</td>
+									<td>{$v1.username}</td>
+									<td>{$v1.sex}</td>
+									<td>{$v1.phone}</td>
+								</tr>
+								{/foreach}
+							{/foreach}
+		            	</table>
+		            </div>
+		        </div>
+		{/foreach}
+		</div>  
+	</div>
+</div>
+
+<script>
+$(function(){
+	// 改变日期
+	$("#Ym").change(function(){
+		location.href = "{:url('Admin/Index/history',array('shop_id'=>$shop_id))}?Ym="+$(this).val();
+	});
+})
+</script>
+{/block}

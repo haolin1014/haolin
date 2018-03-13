@@ -1,0 +1,161 @@
+{extend name="common:base" /}
+
+{block name="main"}
+<style type="text/css">
+.add-admin{
+	width: 189px;
+	height: 189px;
+	border:1px solid #ccc;
+	border-radius: 5px;
+	text-align: center;
+}
+.add-admin span{
+	font-size: 45px;
+	line-height: 190px;
+	cursor: pointer;
+}
+</style>
+<body>
+<div class="container">
+	<div class="row">
+		{foreach $admin as $v}
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading clearfix">
+						<span class="pull-left">{$v.name}</span>
+						<if condition="$v['id'] neq 1">
+						<button class="btn btn-danger btn-xs pull-right delbtn" data-id="{$v.id}">删除</button>
+						</if>
+					</div>
+					<div class="panel-body">
+						<p>账户：{$v.account}</p>
+						<p>上次登录时间：{$v.logintime|date="Y-m-d H:i",###}</p>
+					</div>
+					<div class="panel-footer">
+						{foreach v['auth'] as $v1}
+							<button class="btn btn-success">{$v1.name}</button>
+						{/foreach}
+					</div>
+				</div>
+			</div>
+		{/foreach}
+		
+		<div class="col-md-6" id="adminbox">
+			<div class="add-admin" style="margin:0 auto;">
+				<span class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addadmin"></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 添加管理员模态框 -->
+<div class="modal fade" id="addadmin">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">修改/添加 管理员</h4>
+			</div>
+			<div class="modal-body">
+				<form name="addAdmin">
+					<div class="form-group">
+					    <label for="name">姓名：</label>
+					    <input type="text" class="form-control" id="name" placeholder="请输入您的姓名">
+					  </div>
+					<div class="form-group">
+					    <label for="account">账户：</label>
+					    <input type="text" class="form-control" id="account" placeholder="请输入您的账号" value="">
+					  </div>
+					 <div class="form-group">
+					 	<label for="password">密码：</label>
+					 	<input type="password" class="form-control" id="password" placeholder="请输入您的密码" value="">
+					 </div>
+					<div class="form-group">
+						{foreach $shop as $v}
+							<label for="{$v.id}">{$v.name}</label>
+							<input type="checkbox"  id="{$v.id}" value="{$v.id}" name="shop[]">
+						{/foreach}
+					 </div>
+				 </form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" id="addAdmin">确定</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 删除警示框 -->
+<div class="modal fade" id="del">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">您确认要删除管理员吗？</h4>
+      </div>
+      <div class="modal-body">
+        删除后数据不可恢复，请谨慎操作！
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="del-yes">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function(){
+	$("#addAdmin").click(function(event) {
+		/* 添加管理员 */
+		var name = $("#name").val();
+		var account = $("#account").val();
+		var password = $("#password").val();
+		var auth = '';
+		$("input:checkbox:checked").each(function() {
+			auth += $(this).val()+',';
+		});
+		if(!name || !account || !password || !auth){
+			alert('请填写完整信息');
+			return false;
+		}
+		$.ajax({
+			url: "{:url('admin/manage/addAdmin')}",
+			type: 'post',
+			dataType: 'json',
+			data: {name: name,account:account,password:password,auth:auth},
+			success:function(data){
+				location.reload();
+			}
+		});
+		
+		
+		
+	});
+    	// 删除管理员
+	$(".row").on('click', '.delbtn', function(event) {
+		/* 删除操作 */
+		var id = $(this).attr('data-id');
+		var That = $(this);
+		$("#del").modal();
+		$("#del-yes").click(function(event) {
+		  /* 确认删除 */
+		  $.ajax({
+		  	url: "{:url('admin/manage/delAdmin')}",
+		  	type: 'post',
+		  	dataType: 'json',
+		  	data: {id: id},
+		  	success:function(data){
+		  		$("#del").modal('hide');
+		  		That.parents('.col-md-6').eq(0).remove();
+		  		
+		  	}
+		  });
+		});
+	});
+
+ 
+
+})
+</script>
+{/block}

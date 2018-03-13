@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>生活照相馆</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,height=device-height">
+	<link rel="stylesheet" href="__STATIC__/home/css/reset.css">
+	<link rel="stylesheet" href="__STATIC__/home/css/myorder.css">
+	<script src="__STATIC__/home/js/jquery-2.1.4.min.js"></script>
+<script>
+	$('html').css('fontSize',$(window).width()/12);
+</script>
+</head>
+<body>
+<div class="order-box">
+	{foreach name="order" item="v"}
+	<div class="con">
+		<div class="pic">
+			<img src="__STATIC__/{$v.pic2}" alt="">
+		</div>
+		<div class="order-time">
+			{foreach $v['order_time'] as $v2}
+			<p>{$v.order_day} {$v2}</p>
+			{/foreach}
+		</div>
+		{if condition="$v['pay'] eq 0"}
+		<div class="pay"><a href="{:url('index/order/pay',array('order_id'=>$v['order_id']))}">支付</a></div>
+		{/if}
+	</div>
+	{/foreach}
+</div>
+
+<div class="tel">
+	<p><span>联系电话：</span><a href="tel:4000777143">400-0777-143</a></p>
+</div>
+</body>
+</html>
+<!-- 遗留了一些问题：
+这个地方不同条数显示不同的行高如何实现？
+ -->

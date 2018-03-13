@@ -1,0 +1,145 @@
+{extend name="common:base" /}
+
+{block name="main"}
+<style type="text/css">
+.w-time button{
+	margin-bottom:5px;
+}
+.btn:focus{
+	outline: none;
+}
+</style>
+<div class="container">
+	<div class="row" style="margin-bottom:10px">
+		{foreach $Think.session.shops as $v}
+			<a href="{:url('admin/time/index',['shop_id'=>$v.id])}" class='btn {if condition="($Request.param.shop_id == $v.id) OR (!$Request.param.shop_id AND $v.id == 1)"}btn-primary{/if} '>{$v.name}</a>
+		{/foreach}
+	</div>
+	<div class="row">
+		<div class="panel panel-primary">
+			<div class="panel-heading">今天</div>
+			<div class="panel-body w-time">
+				{foreach $today as $v}
+					{switch name="v['state']"}
+					    {case value="1"}<button class="btn btn-primary" data-state="{$v.state}"  btn-edit="false" data-id="{$v.id}">{$v.time}</button>{/case}
+					    {case value="2"}<button class="btn btn-danger" data-state="{$v.state}" btn-edit="false" data-id="{$v.id}">{$v.time}</button>{/case}
+					    {default /}
+					    	{if condition="strtotime($v['time']) gt time()"}
+					    	<button class="btn btn-default" data-state="{$v.state}" btn-edit="false" data-id="{$v.id}">{$v.time}</button>
+					    	{else /}
+					    	<button class="btn" data-state="3" btn-edit="false" data-id="{$v.id}">{$v.time}</button>
+					    	{/if}
+					{/switch}
+				{/foreach}
+			</div>
+			<div class="panel-footer clearfix"><button class="btn btn-default pull-right" data-edit="false">编辑</button></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="panel panel-primary">
+			<div class="panel-heading">明天</div>
+			<div class="panel-body w-time">
+				{foreach name="tomorrow" item="v"}
+					{switch name="v['state']"}
+					    {case value="1"}<button class="btn btn-primary" data-state="{$v.state}"  btn-edit="false" data-id="{$v.id}">{$v.time}</button>{/case}
+					    {case value="2"}<button class="btn btn-danger" data-state="{$v.state}" btn-edit="false" data-id="{$v.id}">{$v.time}</button>{/case}
+					    {default /}
+					    	<button class="btn btn-default" data-state="{$v.state}" btn-edit="false" data-id="{$v.id}">{$v.time}</button>
+					{/switch}
+				{/foreach}
+			</div>
+			<div class="panel-footer clearfix"><button class="btn btn-default pull-right" data-edit="false">编辑</button></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="panel panel-primary">
+			<div class="panel-heading">后天</div>
+			<div class="panel-body w-time">
+				{foreach name="nextDay" item="v"}
+					{switch name="v['state']"}
+					    {case value="1"}<button class="btn btn-primary" data-state="{$v.state}"  btn-edit="false" data-id="{$v.id}">{$v.time}</button>{/case}
+					    {case value="2"}<button class="btn btn-danger" data-state="{$v.state}" btn-edit="false" data-id="{$v.id}">{$v.time}</button>{/case}
+					    {default /}
+					    	<button class="btn btn-default" data-state="{$v.state}" btn-edit="false" data-id="{$v.id}">{$v.time}</button>
+					{/switch}
+				{/foreach}
+			</div>
+			<div class="panel-footer clearfix"><button class="btn btn-default pull-right" data-edit="false">编辑</button></div>
+		</div>
+	</div>
+</div>
+
+<!-- 操作提示框 -->
+<div class="modal fade" id="success">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">保存成功</h4>
+      </div>
+      <div class="modal-body">
+      	<button class="btn btn-success">恭喜您， 操作成功！</button>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function(){
+	/* 点击编辑按钮 */
+	$("[data-edit]").click(function(event) {
+		if($(this).attr('data-edit')=='false'){
+			$(this).attr('data-edit', true);
+			$(this).text('保存');
+			$(this).parent().prev('.w-time').find('button').attr('btn-edit',true);
+		}else{
+			$(this).attr('data-edit', false);
+			$(this).text('编辑');
+			$(this).parent().prev('.w-time').find('button').attr('btn-edit',false);
+			// ajax保存所有编辑信息
+			var editedBtns = $(this).parent().prev('.w-time').find('button[edited=1]');
+			var json = {};
+			editedBtns.each(function(index,el){
+				var id = $(this).attr('data-id');
+				var state = $(this).attr('data-state');
+				json[id] = state;
+			});
+			$.ajax({
+				url: "{:url('Admin/Time/updateOrderTimeState')}",
+				type: 'post',
+				dataType: 'json',
+				data: json,
+				success:function(data){
+					if(data.state==1){
+						$("#success").modal();
+						setTimeout(function(){
+							$("#success").modal('hide');
+						},1200);
+					}
+				}
+			});
+			
+		}
+		
+	});
+	// 点击时间进行编辑
+	$("button[data-id]").click(function(event) {
+		// 判断按钮是否处于可编辑状态，并且不是已过期和已选择的时间段
+		if($(this).attr('btn-edit')=='false'){
+			return false;
+		} 
+		if($(this).attr('data-state') ==2 || $(this).attr('data-state') == 0){
+			$(this).attr('data-state') == 2 ? $(this).attr('data-state',0).removeClass('btn-danger').addClass('btn-default') : $(this).attr('data-state',2).removeClass('btn-default').addClass('btn-danger');
+			//添加已编辑标记
+			$(this).attr('edited') ? $(this).removeAttr('edited') : $(this).attr('edited',1);
+		}else{
+			return false;
+		}		
+	});
+
+
+})
+</script>
+{/block}

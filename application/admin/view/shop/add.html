@@ -1,0 +1,50 @@
+{extend name="common:base" /}
+
+{block name="main"}
+<style>
+input[type=submit]{width: 200px;background-color: #abcdef;font-weight:bold;}
+</style>
+<body>
+<div class="container">
+  <form action="{:url('Admin/Shop/add')}" method="post" enctype="multipart/form-data">
+  <table class="table table-bordered">
+     <thead>
+       <tr>
+         <th colspan="2" align="center">创建店铺</th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <td><span class="pull-right">店铺名</span></td>
+         <td><input type="text" class="form-control" name="name"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">店铺地址</span></td>
+         <td><input type="text" class="form-control" name="address"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">店铺logo正面图</span></td>
+         <td><input type="file"  name="pic1"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">店铺地址选中图</span></td>
+         <td><input type="file"  name="pic2"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">可预约开始时间</span></td>
+         <td><input type="text" class="form-control" name="start_time" value="08:50"></td>
+       </tr>
+       <tr>
+         <td><span class="pull-right">可预约结束时间</span></td>
+         <td><input type="text" class="form-control" name="end_time" value="21:00"></td>
+       </tr>
+       <tr>
+         <td colspan="2" align="center">
+          <input type="submit" class="form-control" value="保存添加">
+         </td>
+       </tr>
+     </tbody>
+   </table>
+  </form>
+</div>
+{/block}

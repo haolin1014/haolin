@@ -1,0 +1,111 @@
+{extend name="common:base" /}
+
+{block name="main"}
+<style type="text/css">
+a:focus{
+	outline: none;
+}
+.yuyue{
+	margin-top: 15px;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-bottom:  1px solid #ccc;
+}
+.yuyue tr,.yuyue th{
+	text-align: center;
+}
+.refresh{
+	position: absolute;
+	top: 3px;
+	right: 5px;
+	border:1px solid #999;
+	border-radius:5px;
+	padding:2px;
+	text-align:center;
+	cursor: pointer;
+}
+.gotop{
+	position: absolute;
+	right: 10px;
+	bottom: 20px;
+}
+.dian{
+	padding-left: 25px;
+	padding-right: 25px;
+}
+</style>
+<div class="container">
+	<div class="row">
+	{foreach $Think.session.shops as $v}
+		<a href="{:url('admin/index/index',['shop_id'=>$v.id])}" class='btn {if condition="($Request.param.shop_id == $v.id) OR (!$Request.param.shop_id AND $v.id == 1)"}btn-primary{/if} '>{$v.name}</a>
+	{/foreach}
+	</div>
+	<div class="row">
+		<table class="table table-hover yuyue">
+			<tr id="today" class="th">
+				<th colspan="4" style="position:relative;">今日预约 <span class="refresh">刷新（30s）</span></th>
+			</tr>
+			<tr  id="tomorrow" class="th">
+				<th colspan="4">明日预约</th>
+			</tr>
+		</table>
+	</div>
+</div>
+<a href="javascript:gotop();" class="btn btn-default gotop" style="padding:12px 6px;"><span class="glyphicon glyphicon-arrow-up"></span>顶部</a>
+<script>
+$(function(){
+	freshData();
+	setInterval(freshData,30000);//每隔30s自动刷新一次
+
+	// 手动刷新
+	$(".refresh").click(function(){
+		freshData();
+	});
+
+	// 预约数据刷新
+	function freshData(){
+		var shop_id = "{$Request.param.shop_id}";
+		shop_id = shop_id ? shop_id : 1;
+		$.ajax({
+			url: "{:url('Admin/Index/ajaxYuyue')}",
+			type: 'post',
+			dataType: 'json',
+			data: {shop_id:shop_id},
+			success:function(data){
+				if(data){
+					var today = data.today;
+					var tomorrow = data.tomorrow;
+					// 清空原来数据
+					$(".yuyue").find("tr:not('.th')").remove();
+					if(today){
+						var str = '';
+						for(var i = 0;i<today.length;i++){
+							for(var j = 0;j<today[i]['order_time'].length;j++){
+								str += '<tr><td>'+today[i]['order_time'][j]+'</td><td>'+today[i]['username']+'</td><td>'+today[i]['sex']+'</td><td>'+today[i]['phone']+'</td></tr>';
+							}
+							
+						}
+						$(str).insertAfter("#today");
+					}
+					if(tomorrow){
+						var str2 = '';
+						for(var i = 0;i<tomorrow.length;i++){
+							for(var j = 0;j<tomorrow[i]['order_time'].length;j++){
+								str2 += '<tr><td>'+tomorrow[i]['order_time'][j]+'</td><td>'+tomorrow[i]['username']+'</td><td>'+tomorrow[i]['sex']+'</td><td>'+tomorrow[i]['phone']+'</td></tr>';
+							}
+							
+						}
+						$(str2).insertAfter("#tomorrow");
+					}
+					
+				}
+			}
+		})
+	}
+});
+// 回到顶部
+function gotop(){
+	$(window).scrollTop(0);
+}
+</script>
+{/block}
