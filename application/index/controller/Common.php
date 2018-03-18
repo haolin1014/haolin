@@ -7,11 +7,11 @@ use app\index\service\Wx;
 class Common extends Controller
 {
 	public function __construct(){
-		session(null);
-		if(Config('WX_CHECK')){
-			Wx::userCheck();
-		}else{
-			session('uid',1);
-		}
+		// if(Config('WX_CHECK')){
+		// 	Wx::userCheck();
+		// }else{
+		// 	session('uid',1);
+		// }
+		session('uid',1);
 	}
 }

@@ -21,6 +21,7 @@ class Common extends Controller{
 		        $this->error($file->getError());
 		    }
 		}
+		return '';
 	}
 }
 

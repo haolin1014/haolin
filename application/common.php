@@ -20,3 +20,11 @@ function httpGet($url) {
 	curl_close($curl);
 	return $res;
 }
+
+function p($arr){
+	header("Content-type:text/html;charset=utf-8");
+	echo "<pre>";
+	print_r($arr);
+	echo "</pre>";
+	die;
+}

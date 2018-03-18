@@ -7,13 +7,14 @@ class Login extends Controller
 {
 	public function index(){
 		if(!request()->isPost()) return view();
-		$captcha = input('verify');
-		if(!captcha_check($captcha)){
-		 $this->error('验证码不正确');
-		};
+
+		// 验证码验证
+		$this->captcha();
+
 		$username = input('name');
 		$password = md5(input('pwd'));
 		$user = Db::table('admin')->where('account',$username)->find();
+		
 		if($user && $user['password']==$password){
 			$this->makeAuth($user);//写入权限
 			$this->redirect('admin/index/index');
@@ -22,13 +23,20 @@ class Login extends Controller
 		}
 	}
 
-	// 退出登录
+	/**
+	 * 退出登录
+	 * @return [type] [description]
+	 */
 	public function logout(){
 		session(null);
         $this->redirect('Admin/Login/index');
 	}
 
-	// 写入权限
+	/**
+	 * 写入权限
+	 * @param  [type] $user [description]
+	 * @return [type]       [description]
+	 */
 	private function makeAuth($user){
 		//写入session
 		session('uid',$user['id']);
@@ -45,6 +53,17 @@ class Login extends Controller
 			$shops = Db::table('shop')->field('id,name')->where('id','in',$user['auth'])->select();
 		}
 		session('shops',$shops);
+	}
+
+	/**
+	 * [captcha 验证码]
+	 * @return [type] [description]
+	 */
+	private function captcha(){
+		if(config('CAPTCHA')){
+			$captcha = input('verify');
+			if(!captcha_check($captcha))$this->error('验证码不正确');
+		}
 	}
 
 } 
